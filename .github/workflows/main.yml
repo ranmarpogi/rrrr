@@ -1,0 +1,28 @@
+name: CI
+ 
+on: [push, workflow_dispatch]
+ 
+jobs:
+  build:
+ 
+    runs-on: windows-latest
+ 
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+ 
+    - name: Setup Environment
+      run: |
+        # Here you can set up any environment variables or configurations needed
+        echo "Setting up environment variables"
+ 
+    - name: Enable Remote Desktop
+      run: |
+        Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
+        Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+        Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "UserAuthentication" -Value 1
+        Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "P@ssw0rd!" -Force)
+ 
+    - name: Notify Deployment
+      run: |
+        echo "Deployment has been set up successfully!"
